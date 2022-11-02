@@ -1,6 +1,8 @@
 import express from 'express';
 import ejs from 'ejs';
 
+import pageRoute from './routes/pageRoute.js';
+
 const app = express();
 
 // template engine
@@ -10,16 +12,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // routing
-app.get('/', (req, res) => {
-	res.status(200).render('index', {
-		pageName: 'index',
-	});
-});
-app.get('/about', (req, res) => {
-	res.status(200).render('about', {
-		pageName: 'about',
-	});
-});
+app.use('/', pageRoute.router);
 
 const PORT = 8080;
 app.listen(PORT, () => {
