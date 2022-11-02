@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 const app = express();
 
-// get env variables
+// get credentials for db from env variables
 dotenv.config();
 const USER_NAME = process.env.dbuser;
 const PWD = process.env.pwd;
