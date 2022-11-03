@@ -16,25 +16,36 @@ const createUser = async (req, res) => {
 	}
 };
 
-// TODO: there is no response in wrong password case
 const loginUser = async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		const { err, user } = await User.findOne({ email });
-		if (user) {
-			bcrypt.compare(password, user.password, function (err, same) {
-				console.log(same);
-				if (same) {
-					// user session
-					return res.status(200).send('logged in');
-				}
+		// no callbacks in async await... so if there are no mail match
+		// user will be null and when we try to compare passwords with user.password
+		// it will throw a TypeError, which will be caught and handled by catch...
+		const user = await User.findOne({ email });
+
+		bcrypt.compare(password, user.password, function (err, same) {
+			if (same) {
+				// TODO: user session
+				return res.status(200).send('logged in');
+			} else {
+				return res.status(401).send('wrong password');
+			}
+		});
+	} catch (err) {
+		if (err instanceof TypeError) {
+			res.status(401).json({
+				status: 'failure',
+				cause: 'no user found with given email',
+				err: `${err}`,
+			});
+		} else {
+			res.status(400).json({
+				status: 'failure',
+				cause: `${err}`,
+				err: `${err}`,
 			});
 		}
-	} catch (err) {
-		res.status(400).json({
-			status: 'failure',
-			err,
-		});
 	}
 };
 
