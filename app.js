@@ -6,6 +6,7 @@ import methodOverride from 'method-override';
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
 import categoryRoute from './routes/categoryRoute.js';
+import userRoute from './routes/userRoute.js';
 
 import dotenv from 'dotenv';
 
@@ -44,6 +45,7 @@ app.use(express.urlencoded({ extended: true })); // getting a param from body
 app.use('/', pageRoute.router);
 app.use('/courses', courseRoute.router);
 app.use('/categories', categoryRoute.router);
+app.use('/users', userRoute.router);
 
 // override POST and GET methods
 app.use(
