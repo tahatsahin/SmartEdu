@@ -27,7 +27,7 @@ const loginUser = async (req, res) => {
 		bcrypt.compare(password, user.password, function (err, same) {
 			if (same) {
 				req.session.userID = user._id; // assign db id to session userID
-				return res.status(200).redirect('/');
+				return res.status(200).redirect('/users/dashboard');
 			} else {
 				return res.status(401).send('wrong password');
 			}
@@ -55,8 +55,17 @@ const logoutUser = async (req, res) => {
 	});
 };
 
+const getDashboardPage = async (req, res) => {
+	const user = await User.findOne({ _id: req.session.userID });
+	res.status(200).render('dashboard', {
+		pageName: 'dashboard',
+		user,
+	});
+};
+
 export default {
 	createUser,
 	loginUser,
 	logoutUser,
+	getDashboardPage,
 };
