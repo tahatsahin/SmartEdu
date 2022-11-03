@@ -1,5 +1,5 @@
-import User from './../models/User.js';
 import bcrypt from 'bcrypt';
+import User from './../models/User.js';
 
 const createUser = async (req, res) => {
 	try {
@@ -26,8 +26,8 @@ const loginUser = async (req, res) => {
 
 		bcrypt.compare(password, user.password, function (err, same) {
 			if (same) {
-				// TODO: user session
-				return res.status(200).send('logged in');
+				req.session.userID = user._id; // assign db id to session userID
+				return res.status(200).redirect('/');
 			} else {
 				return res.status(401).send('wrong password');
 			}
