@@ -63,6 +63,7 @@ app.use('*', (req, resp, next) => {
 	userIN = req.session.userID;
 	next();
 });
+// route unauthorized users to login page
 
 // routing
 // main page
