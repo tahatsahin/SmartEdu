@@ -3,6 +3,7 @@ import ejs from 'ejs';
 import mongoose from 'mongoose';
 import methodOverride from 'method-override';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
@@ -17,16 +18,14 @@ const app = express();
 dotenv.config();
 const USER_NAME = process.env.dbuser;
 const PWD = process.env.pwd;
+const DB_URL = `mongodb+srv://${USER_NAME}:${PWD}@cluster0.eupg0no.mongodb.net/?retryWrites=true&w=majority`;
 
 // connect db
 mongoose
-	.connect(
-		`mongodb+srv://${USER_NAME}:${PWD}@cluster0.eupg0no.mongodb.net/?retryWrites=true&w=majority`,
-		{
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		}
-	)
+	.connect(DB_URL, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => {
 		console.log('db connected');
 	})
@@ -50,6 +49,9 @@ app.use(
 		secret: 'my_keyboard_cat', // self defined secret
 		resave: false,
 		saveUninitialized: true,
+		store: MongoStore.create({
+			mongoUrl: DB_URL,
+		}),
 	})
 );
 app.use('*', (req, resp, next) => {
