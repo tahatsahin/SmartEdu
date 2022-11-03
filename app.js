@@ -4,20 +4,21 @@ import mongoose from 'mongoose';
 import methodOverride from 'method-override';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import dotenv from 'dotenv';
 
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
 import categoryRoute from './routes/categoryRoute.js';
 import userRoute from './routes/userRoute.js';
 
-import dotenv from 'dotenv';
-
+// initialize express
 const app = express();
 
 // get credentials for db from env variables
 dotenv.config();
 const USER_NAME = process.env.dbuser;
 const PWD = process.env.pwd;
+// define db url
 const DB_URL = `mongodb+srv://${USER_NAME}:${PWD}@cluster0.eupg0no.mongodb.net/?retryWrites=true&w=majority`;
 
 // connect db
@@ -33,16 +34,19 @@ mongoose
 		console.log(err);
 	});
 
-// template engine
+// template engine initilize
 app.set('view engine', 'ejs');
 
-// global variable
+// global variable for user session
 global.userIN = null;
 
 // middleware
+// folder of static files
 app.use(express.static('public'));
-app.use(express.json()); // json and urlencoded is needed for
-app.use(express.urlencoded({ extended: true })); // getting a param from body
+// json and urlencoded is needed for getting a param from body
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// user session
 app.use(
 	// user session
 	session({
@@ -50,29 +54,36 @@ app.use(
 		resave: false,
 		saveUninitialized: true,
 		store: MongoStore.create({
-			mongoUrl: DB_URL,
+			mongoUrl: DB_URL, // storing session in db using mongostore
 		}),
 	})
 );
+// user session for all pages
 app.use('*', (req, resp, next) => {
 	userIN = req.session.userID;
 	next();
 });
 
 // routing
+// main page
 app.use('/', pageRoute.router);
+// courses page
 app.use('/courses', courseRoute.router);
+// categories page
 app.use('/categories', categoryRoute.router);
+// users page
 app.use('/users', userRoute.router);
 
-// override POST and GET methods
+// override POST and GET methods to be able to delete categories
 app.use(
 	methodOverride('_method', {
 		methods: ['POST', 'GET'],
 	})
 );
 
+// define port
 const PORT = 8080;
+// listen port
 app.listen(PORT, () => {
 	console.log(`start server at port ${PORT}`);
 });
