@@ -4,10 +4,7 @@ import Category from './../models/Category.js';
 const createCourse = async (req, res) => {
 	try {
 		const course = await Course.create(req.body);
-		res.status(201).json({
-			status: 'success',
-			course,
-		});
+		res.status(201).redirect('/courses');
 	} catch (err) {
 		res.status(400).json({
 			status: 'failure',
@@ -29,7 +26,7 @@ const getAllCourses = async (req, res) => {
 			filter = { category: category._id };
 		}
 		// filter courses with the category id
-		const courses = await Course.find(filter);
+		const courses = await Course.find(filter).sort('-dateCreated');
 		const categories = await Category.find();
 		res.status(200).render('courses', {
 			courses,
