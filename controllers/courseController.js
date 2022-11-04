@@ -3,7 +3,12 @@ import Category from './../models/Category.js';
 
 const createCourse = async (req, res) => {
 	try {
-		const course = await Course.create(req.body);
+		const course = await Course.create({
+			name: req.body.name,
+			description: req.body.description,
+			category: req.body.category,
+			createdBy: req.session.userID,
+		});
 		res.status(201).redirect('/courses');
 	} catch (err) {
 		res.status(400).json({
@@ -43,7 +48,9 @@ const getAllCourses = async (req, res) => {
 
 const getCourse = async (req, res) => {
 	try {
-		const course = await Course.findOne({ slug: req.params.slug });
+		const course = await Course.findOne({ slug: req.params.slug }).populate(
+			'createdBy'
+		);
 		const categories = await Category.find();
 		res.status(200).render('course', {
 			course,

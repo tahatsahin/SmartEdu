@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import Category from '../models/Category.js';
+import Course from '../models/Course.js';
 import User from './../models/User.js';
 
 const createUser = async (req, res) => {
@@ -56,10 +57,12 @@ const logoutUser = async (req, res) => {
 const getDashboardPage = async (req, res) => {
 	const user = await User.findOne({ _id: req.session.userID });
 	const categories = await Category.find();
+	const courses = await Course.find({ createdBy: req.session.userID });
 	res.status(200).render('dashboard', {
 		pageName: 'dashboard',
 		categories,
 		user,
+		courses,
 	});
 };
 
