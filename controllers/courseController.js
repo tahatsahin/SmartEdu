@@ -24,6 +24,8 @@ const getAllCourses = async (req, res) => {
 		// filter with category
 		// get query
 		const categorySlug = req.query.categories;
+		// get search query
+		const query = req.query.search;
 		// get category slug according to query
 		const category = await Category.findOne({ slug: categorySlug });
 		// define a filter which have the category id
@@ -31,8 +33,21 @@ const getAllCourses = async (req, res) => {
 		if (categorySlug) {
 			filter = { category: category._id };
 		}
+		if (query) {
+			filter = { name: query };
+		}
+		if (!query && !categorySlug) {
+			(filter.name = ''), (filter.category = null);
+		}
 		// filter courses with the category id
-		const courses = await Course.find(filter).sort('-dateCreated');
+		const courses = await Course.find({
+			$or: [
+				{ name: { $regex: '.*' + filter.name + '.*', $options: 'i' } },
+				{ category: filter.category },
+			],
+		})
+			.sort('-dateCreated')
+			.populate('createdBy');
 		const categories = await Category.find();
 		res.status(200).render('courses', {
 			courses,
