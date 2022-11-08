@@ -49,6 +49,7 @@ const getAllCourses = async (req, res) => {
 
 const getCourse = async (req, res) => {
 	try {
+		const user = await User.findById(req.session.userID);
 		const course = await Course.findOne({ slug: req.params.slug }).populate(
 			'createdBy'
 		);
@@ -56,6 +57,7 @@ const getCourse = async (req, res) => {
 		res.status(200).render('course', {
 			course,
 			categories,
+			user,
 			pageName: 'courses',
 		});
 	} catch (err) {
@@ -87,9 +89,31 @@ const enrollCourse = async (req, res) => {
 	}
 };
 
+const releaseCourse = async (req, res) => {
+	try {
+		const user = await User.findById(req.session.userID);
+		if (!user.courses.includes(req.body.course_id)) {
+			res.status(406).json({
+				status: 'failure',
+				err: 'You are not enrolled this course!',
+			});
+		} else {
+			await user.courses.pull({ _id: req.body.course_id });
+			await user.save();
+			res.status(200).redirect('/users/dashboard');
+		}
+	} catch (err) {
+		res.status(400).json({
+			status: 'failure',
+			err,
+		});
+	}
+};
+
 export default {
 	createCourse,
 	getAllCourses,
 	getCourse,
 	enrollCourse,
+	releaseCourse,
 };

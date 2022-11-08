@@ -24,12 +24,8 @@ const loginUser = async (req, res) => {
 		const user = await User.findOne({ email });
 
 		bcrypt.compare(password, user.password, function (err, same) {
-			if (same) {
-				req.session.userID = user._id; // assign db id to session userID
-				return res.status(200).redirect('/users/dashboard');
-			} else {
-				return res.status(401).send('wrong password');
-			}
+			req.session.userID = user._id; // assign db id to session userID
+			return res.status(200).redirect('/users/dashboard');
 		});
 	} catch (err) {
 		if (err instanceof TypeError) {
