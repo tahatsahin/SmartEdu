@@ -1,5 +1,6 @@
 import Course from './../models/Course.js';
 import Category from './../models/Category.js';
+import User from '../models/User.js';
 
 const createCourse = async (req, res) => {
 	try {
@@ -65,8 +66,30 @@ const getCourse = async (req, res) => {
 	}
 };
 
+const enrollCourse = async (req, res) => {
+	try {
+		const user = await User.findById(req.session.userID);
+		if (user.courses.includes(req.body.course_id)) {
+			res.status(406).json({
+				status: 'failure',
+				err: 'You have already enrolled this course!',
+			});
+		} else {
+			await user.courses.push({ _id: req.body.course_id });
+			await user.save();
+			res.status(200).redirect('/users/dashboard');
+		}
+	} catch (err) {
+		res.status(400).json({
+			status: 'failure',
+			err,
+		});
+	}
+};
+
 export default {
 	createCourse,
 	getAllCourses,
 	getCourse,
+	enrollCourse,
 };
