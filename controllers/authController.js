@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { validationResult } from 'express-validator';
 import Category from '../models/Category.js';
 import Course from '../models/Course.js';
 import User from './../models/User.js';
@@ -7,11 +8,13 @@ const createUser = async (req, res) => {
 	try {
 		const user = await User.create(req.body);
 		res.status(201).redirect('/login');
-	} catch (err) {
-		res.status(400).json({
-			status: 'failure',
-			err,
-		});
+	} catch (error) {
+		const errors = validationResult(req);
+
+		for (let i = 0; i < errors.array().length; i++) {
+			req.flash('error', `${errors.array()[i].msg}`);
+		}
+		res.status(400).redirect('/register');
 	}
 };
 
@@ -22,11 +25,20 @@ const loginUser = async (req, res) => {
 		// user will be null and when we try to compare passwords with user.password
 		// it will throw a TypeError, which will be caught and handled by catch...
 		const user = await User.findOne({ email });
-
-		bcrypt.compare(password, user.password, function (err, same) {
-			req.session.userID = user._id; // assign db id to session userID
-			return res.status(200).redirect('/users/dashboard');
-		});
+		if (user) {
+			bcrypt.compare(password, user.password, function (err, same) {
+				if (same) {
+					req.session.userID = user._id; // assign db id to session userID
+					return res.status(200).redirect('/users/dashboard');
+				} else {
+					req.flash('error', 'Wrong Password...');
+					return res.status(400).redirect('/login');
+				}
+			});
+		} else {
+			req.flash('error', 'User does not exist...');
+			return res.status(400).redirect('/login');
+		}
 	} catch (err) {
 		if (err instanceof TypeError) {
 			res.status(401).json({
