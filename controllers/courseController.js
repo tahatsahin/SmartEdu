@@ -10,12 +10,14 @@ const createCourse = async (req, res) => {
 			category: req.body.category,
 			createdBy: req.session.userID,
 		});
+		req.flash(
+			'success',
+			`Course "${course.name}" has been created succesfully`
+		);
 		res.status(201).redirect('/courses');
 	} catch (err) {
-		res.status(400).json({
-			status: 'failure',
-			err,
-		});
+		req.flash('error', "Couldn't create course!");
+		res.status(400).redirect('/courses');
 	}
 };
 

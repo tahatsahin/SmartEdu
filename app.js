@@ -5,6 +5,7 @@ import methodOverride from 'method-override';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import dotenv from 'dotenv';
+import flash from 'connect-flash';
 
 import pageRoute from './routes/pageRoute.js';
 import courseRoute from './routes/courseRoute.js';
@@ -61,6 +62,12 @@ app.use(
 // user session for all pages
 app.use('*', (req, resp, next) => {
 	userIN = req.session.userID;
+	next();
+});
+// flash notification
+app.use(flash());
+app.use((req, res, next) => {
+	res.locals.flashMessage = req.flash();
 	next();
 });
 
