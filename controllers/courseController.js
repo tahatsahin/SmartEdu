@@ -127,10 +127,27 @@ const releaseCourse = async (req, res) => {
 	}
 };
 
+const deleteCourse = async (req, res) => {
+	try {
+		const course = await Course.findOneAndRemove({ slug: req.params.slug });
+		req.flash(
+			'error',
+			`Course "${course.name}" has been deleted succesfully`
+		);
+		res.status(204).redirect('/users/dashboard');
+	} catch (err) {
+		res.status(400).json({
+			status: 'failure',
+			err,
+		});
+	}
+};
+
 export default {
 	createCourse,
 	getAllCourses,
 	getCourse,
 	enrollCourse,
 	releaseCourse,
+	deleteCourse,
 };

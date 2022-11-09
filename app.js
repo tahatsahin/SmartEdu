@@ -70,6 +70,12 @@ app.use((req, res, next) => {
 	res.locals.flashMessage = req.flash();
 	next();
 });
+// override POST and GET methods to be able to delete courses
+app.use(
+	methodOverride('_method', {
+		methods: ['POST', 'GET'],
+	})
+);
 
 // routing
 // main page
@@ -80,13 +86,6 @@ app.use('/courses', courseRoute.router);
 app.use('/categories', categoryRoute.router);
 // users page
 app.use('/users', userRoute.router);
-
-// override POST and GET methods to be able to delete categories
-app.use(
-	methodOverride('_method', {
-		methods: ['POST', 'GET'],
-	})
-);
 
 // define port
 const PORT = 8080;

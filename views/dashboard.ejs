@@ -62,20 +62,33 @@
 						<div id="overviews" class="section wb">
 							<div class="container">
 								<div class="row">
-									<div class="col-lg-12 text-center">
-										<button class="btn btn-lg btn-warning rounded-0 text-white" href="#"
-											data-toggle="modal" data-target="#addCourse"><span>Create New
-												Course</span></button>
-									</div>
-									<div class="col-lg-12 blog-post-single">
-										<div class="blog-author">
-											<div class="author-bio">
-												<h3 class="author_name"><a>Courses from <%= user.name %></a>
-												</h3>
+									<% if(flashMessage) { %>
+										<% if(flashMessage.success) { %>
+											<div class="alert alert-success text-center">
+												<%= flashMessage.success %>
 											</div>
-										</div>
+											<% } else if(flashMessage.error) { %>
+												<div class="alert alert-danger text-center">
+													<%= flashMessage.error %>
+												</div>
+												<% } %>
+													<% } %>
+														<div class="col-lg-12 text-center">
+															<button class="btn btn-lg btn-warning rounded-0 text-white"
+																href="#" data-toggle="modal"
+																data-target="#addCourse"><span>Create New
+																	Course</span></button>
+														</div>
+														<div class="col-lg-12 blog-post-single">
+															<div class="blog-author">
+																<div class="author-bio">
+																	<h3 class="author_name"><a>Courses from <%=
+																				user.name %></a>
+																	</h3>
+																</div>
+															</div>
 
-									</div><!-- end col -->
+														</div><!-- end col -->
 								</div><!-- end row -->
 								<div class="row mt-5">
 									<% for(let i=0; i < courses.length; i++) { %>
@@ -94,6 +107,21 @@
 														<p>
 															<%= courses[i].description %>
 														</p>
+													</div>
+													<div class="clearfix">
+														<ul style="list-style-type: none;">
+															<li style="float: left">
+																<button
+																	class="btn btn-primary rounded-0 text-white"><span>Update</span>
+																</button>
+															</li>
+															<li style="float: right">
+																<a href="/courses/<%= courses[i].slug %>?_method=DELETE"
+																	onclick="return confirm('Are you sure?')"
+																	class="btn btn-danger rounded-0 text-white"><span>Delete</span>
+																</a>
+															</li>
+														</ul>
 													</div>
 												</div>
 											</div>
