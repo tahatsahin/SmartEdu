@@ -127,6 +127,8 @@ const releaseCourse = async (req, res) => {
 	}
 };
 
+// TODO: some students might have been enrolled to the course that is about to deleted.
+// if there are students, delete the course from their enrolled course list...
 const deleteCourse = async (req, res) => {
 	try {
 		const course = await Course.findOneAndRemove({ slug: req.params.slug });
@@ -143,6 +145,8 @@ const deleteCourse = async (req, res) => {
 	}
 };
 
+// TODO: while updating a course, check db to see
+// if there is another course with the same name
 const updateCourse = async (req, res) => {
 	try {
 		const course = await Course.findOne({ slug: req.params.slug });
