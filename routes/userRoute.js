@@ -12,12 +12,11 @@ router.route('/signup').post(
 		body('email')
 			.isEmail()
 			.withMessage('Please Enter Valid Email...')
-			.custom((userEmail) => {
-				return User.findOne({ email: userEmail }).then((user) => {
-					if (user) {
-						return Promise.reject('Email already exists...');
-					}
-				});
+			.custom(async (userEmail) => {
+				const user = await User.findOne({ email: userEmail });
+				if (user) {
+					return Promise.reject('Email already exists...');
+				}
 			}),
 		body('password')
 			.not()

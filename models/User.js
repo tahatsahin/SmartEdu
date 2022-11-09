@@ -34,10 +34,15 @@ UserSchema.pre('save', function (next) {
 	const user = this;
 	const saltRounds = 10;
 	// encryption func
-	bcrypt.hash(user.password, saltRounds, (err, hash) => {
+	if (!user.isModified('password')) return next();
+	bcrypt.genSalt(saltRounds, (err, saltRounds) => {
 		// use encrypted version
-		user.password = hash;
-		next();
+		if (err) return next(err);
+		bcrypt.hash(user.password, saltRounds, (err, hash) => {
+			if (err) return next(err);
+			user.password = hash;
+			next();
+		});
 	});
 });
 
