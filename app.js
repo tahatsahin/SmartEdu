@@ -12,6 +12,8 @@ import courseRoute from './routes/courseRoute.js';
 import categoryRoute from './routes/categoryRoute.js';
 import userRoute from './routes/userRoute.js';
 
+// deployed at https://smartedu-app-t.herokuapp.com/
+
 // initialize express
 const app = express();
 
