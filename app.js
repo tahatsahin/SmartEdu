@@ -88,7 +88,7 @@ app.use('/categories', categoryRoute.router);
 app.use('/users', userRoute.router);
 
 // define port
-const PORT = 8080;
+const PORT = process.env.PORT || 5000;
 // listen port
 app.listen(PORT, () => {
 	console.log(`start server at port ${PORT}`);
