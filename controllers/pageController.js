@@ -1,9 +1,20 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import Course from './../models/Course.js';
+import User from '../models/User.js';
 
-const getIndexPage = (req, res) => {
+const getIndexPage = async (req, res) => {
+	const courses = await Course.find().sort('-dateCreated').limit(2);
+	const totalCourses = await Course.find().countDocuments();
+	const totalStudents = await User.find().countDocuments({ role: 'student' });
+	const totalTeachers = await User.find().countDocuments({ role: 'teacher' });
+
 	res.status(200).render('index', {
 		pageName: 'index',
+		courses,
+		totalCourses,
+		totalStudents,
+		totalTeachers,
 	});
 };
 const getAboutPage = (req, res) => {
