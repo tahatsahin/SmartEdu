@@ -18,6 +18,21 @@ const createUser = async (req, res) => {
 	}
 };
 
+const deleteUser = async (req, res) => {
+	try {
+		// TODO: delete the id of courses from students' enrolled course list as well
+		const user = await User.findByIdAndRemove(req.params.id);
+		await Course.deleteMany({ createdBy: req.params.id });
+		res.status(201).redirect('/users/dashboard');
+	} catch (error) {
+		res.status(400).json({
+			status: 'failure',
+			err: 'Error while deleting user',
+			error,
+		});
+	}
+};
+
 const loginUser = async (req, res) => {
 	try {
 		const { email, password } = req.body;
@@ -66,6 +81,7 @@ const getDashboardPage = async (req, res) => {
 	const user = await User.findOne({ _id: req.session.userID }).populate(
 		'courses'
 	);
+	const users = await User.find();
 	const categories = await Category.find();
 	const courses = await Course.find({ createdBy: req.session.userID });
 	res.status(200).render('dashboard', {
@@ -73,12 +89,14 @@ const getDashboardPage = async (req, res) => {
 		categories,
 		user,
 		courses,
+		users,
 	});
 };
 
 export default {
 	createUser,
 	loginUser,
+	deleteUser,
 	logoutUser,
 	getDashboardPage,
 };

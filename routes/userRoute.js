@@ -28,6 +28,7 @@ router.route('/signup').post(
 ); // /users/signup
 router.route('/login').post(authController.loginUser);
 router.route('/logout').get(authController.logoutUser);
+router.route('/:id').delete(authController.deleteUser);
 router
 	.route('/dashboard')
 	// check if user signed in
