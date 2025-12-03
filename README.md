@@ -13,7 +13,8 @@ method-override: Use verbs such as PUT or DELETE where the client doesn't suppor
 Mongoose: MongoDB object modeling tool
 nodemailer: Send emails using nodejs
 slugify: Create slugs
-==============================
+
+---------------
 
 To be able to deploy dockerized version of the application follow below. 
 
