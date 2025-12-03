@@ -1,0 +1,49 @@
+---
+- name: include secrets
+  include_vars:
+    file: "{{ playbook_dir }}/../vault/prod-secrets.yml"
+  no_log: true
+
+- name: create app directory
+  file: 
+    path: "{{ app_dir }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: copy app source
+  ansible.builtin.synchronize:
+    src: "{{ playbook_dir }}/../../../my-app"
+    dest: /opt/
+    rsync_opts:
+      - "--exclude=node_modules"
+      - "--exclude=.git"
+  when: app_repo_url is not defined
+
+- name: clone app repo
+  ansible.builtin.git:
+    repo: "{{ app_repo_url }}"
+    dest: /opt/my-app
+    version: "{{ app_repo_version | default('main') }}"
+  when: app_repo_url is defined
+
+- name: render env file
+  template:
+    src: env.j2
+    dest: "{{ app_dir }}/.env"
+    mode: '0600'
+  become: true
+
+- name: render docker-compose file
+  template:
+    src: "{{ playbook_dir }}/../roles/app/templates/docker-compose.yml.j2"
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: '0644'
+  become: true
+
+- name: go to directory and run docker-compose up 
+  ansible.builtin.shell:
+    cmd: "cd {{ app_dir }} && docker-compose up -d"
+  args:
+    executable: /bin/bash
+  become: true

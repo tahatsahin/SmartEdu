@@ -1,0 +1,4 @@
+do_token="your-do-token-here"
+droplet_size="s-1vcpu-1gb"
+region="fra1"
+project_name="my-app"

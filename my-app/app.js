@@ -19,10 +19,11 @@ const app = express();
 
 // get credentials for db from env variables
 dotenv.config();
-const USER_NAME = process.env.dbuser;
-const PWD = process.env.pwd;
+//const USER_NAME = process.env.dbuser;
+//const PWD = process.env.pwd;
 // define db url
-const DB_URL = `mongodb+srv://${USER_NAME}:${PWD}@cluster0.eupg0no.mongodb.net/?retryWrites=true&w=majority`;
+//const DB_URL = `mongodb+srv://${USER_NAME}:${PWD}@cluster0.eupg0no.mongodb.net/?retryWrites=true&w=majority`;
+const DB_URL = process.env.MONGO_URL || 'mongodb://localhost:27016/mydb';
 
 // connect db
 mongoose

@@ -1,0 +1,12 @@
+---
+- name: provision node + mongo app servers
+  hosts: app_servers
+  become: yes
+
+  vars_files:
+    - ../vault/prod-secrets.yml
+    - ../group_vars/app_servers.yml
+
+  roles:
+    - ../roles/common
+    - ../roles/app
